@@ -149,6 +149,12 @@ func (l *Logger) Write(p []byte) (n int, err error) {
 		}
 	}
 
+	if info, _ := os_Stat(l.filename()); info == nil {
+		if err = l.openExistingOrNew(len(p)); err != nil {
+			return 0, err
+		}
+	}
+
 	if l.size+writeLen > l.max() {
 		if err := l.rotate(); err != nil {
 			return 0, err
